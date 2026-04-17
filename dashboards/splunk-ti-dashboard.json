@@ -1,0 +1,65 @@
+{
+  "label": "BFSI Threat Intelligence Dashboard",
+  "description": "Real-time threat intelligence dashboard for BFSI sector - IOC monitoring, threat actor tracking, and alert correlation",
+  "author": "Anvesh Raju Vishwaraju",
+  "panels": [
+    {
+      "title": "🔴 Active High-Risk IOCs (Last 24h)",
+      "type": "table",
+      "search": "index=threat_intel sourcetype=ioc_feed risk_level=HIGH earliest=-24h | stats count by ioc_type, indicator, source, risk_level | sort -count",
+      "fields": ["ioc_type", "indicator", "source", "risk_level", "count"]
+    },
+    {
+      "title": "📊 IOC Types Distribution",
+      "type": "pie",
+      "search": "index=threat_intel sourcetype=ioc_feed earliest=-7d | stats count by ioc_type",
+      "fields": ["ioc_type", "count"]
+    },
+    {
+      "title": "🌐 Top Threat Source Countries",
+      "type": "choropleth",
+      "search": "index=threat_intel sourcetype=ioc_feed ioc_type=ip earliest=-7d | iplocation indicator | stats count by Country | sort -count | head 10",
+      "fields": ["Country", "count"]
+    },
+    {
+      "title": "🎯 MITRE ATT&CK Technique Frequency",
+      "type": "bar",
+      "search": "index=threat_intel sourcetype=ioc_feed earliest=-30d | stats count by mitre_technique | sort -count | head 10",
+      "fields": ["mitre_technique", "count"]
+    },
+    {
+      "title": "⚡ IOC Matches in Network Logs (Last 1h)",
+      "type": "table",
+      "search": "index=network earliest=-1h [search index=threat_intel sourcetype=ioc_feed risk_level=HIGH | fields indicator | rename indicator as dest_ip] | table _time, src_ip, dest_ip, dest_port, bytes_out | sort -_time",
+      "fields": ["_time", "src_ip", "dest_ip", "dest_port", "bytes_out"]
+    },
+    {
+      "title": "📈 Threat Intel Feed Volume (7 Days)",
+      "type": "line",
+      "search": "index=threat_intel sourcetype=ioc_feed earliest=-7d | timechart span=1d count by source",
+      "fields": ["_time", "OTX", "CERT-In", "VirusTotal"]
+    },
+    {
+      "title": "🏦 BFSI-Targeted Campaigns Active",
+      "type": "single",
+      "search": "index=threat_intel sourcetype=ioc_feed industries=BFSI earliest=-7d | stats dc(campaign_id) as active_campaigns",
+      "fields": ["active_campaigns"]
+    },
+    {
+      "title": "🚨 Firewall Hits on Known Bad IPs",
+      "type": "table",
+      "search": "index=network sourcetype=firewall_logs [search index=threat_intel sourcetype=ioc_feed ioc_type=ip risk_level=HIGH | fields indicator | rename indicator as dest_ip] earliest=-24h | stats count by src_ip, dest_ip, action | sort -count",
+      "fields": ["src_ip", "dest_ip", "action", "count"]
+    }
+  ],
+  "instructions": {
+    "setup": [
+      "1. Create index: index=threat_intel in Splunk",
+      "2. Run enrichment-script.py to populate IOC data",
+      "3. Import this dashboard: Splunk → Dashboards → Import",
+      "4. Adjust index names to match your environment",
+      "5. Set dashboard refresh to every 5 minutes"
+    ],
+    "note": "Replace index names (threat_intel, network) with your actual Splunk index names"
+  }
+}

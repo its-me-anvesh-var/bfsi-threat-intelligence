@@ -1,0 +1,58 @@
+{
+  "timestamp": "2026-04-01T09:15:32",
+  "analyst": "Anvesh Raju Vishwaraju",
+  "ioc": "185.220.101.47",
+  "type": "ip",
+  "risk_assessment": "🔴 HIGH RISK — Block immediately",
+  "recommended_action": "Block at firewall and email gateway. Add to SIEM watchlist.",
+  "enrichment_results": [
+    {
+      "source": "OTX AlienVault",
+      "ioc": "185.220.101.47",
+      "type": "IP",
+      "pulse_count": 14,
+      "reputation": -3,
+      "country": "Germany",
+      "asn": "AS60729 - Liteserver B.V.",
+      "malware_families": [
+        "Indian Banking Phishing Campaign Q1 2026",
+        "BFSI Credential Harvesting",
+        "TOR Exit Node Abuse"
+      ],
+      "first_seen": "2025-11-12T00:00:00"
+    },
+    {
+      "source": "VirusTotal",
+      "ioc": "185.220.101.47",
+      "malicious": 18,
+      "suspicious": 4,
+      "harmless": 52,
+      "country": "DE",
+      "as_owner": "Liteserver B.V.",
+      "reputation": -12
+    }
+  ],
+  "ioc_context": {
+    "type": "Phishing Infrastructure",
+    "targeted_sector": "BFSI — Indian Banks",
+    "observed_campaigns": [
+      "Fake HDFC Bank login page hosting",
+      "SBI KYC phishing redirect",
+      "Credential exfiltration endpoint"
+    ],
+    "related_iocs": [
+      {"type": "domain", "value": "secure-hdfc-login.com"},
+      {"type": "domain", "value": "sbi-kyc-update.in"},
+      {"type": "ip",     "value": "185.220.101.48"},
+      {"type": "ip",     "value": "185.220.101.49"}
+    ]
+  },
+  "mitre_mapping": {
+    "tactic": "Initial Access",
+    "technique": "T1566.002",
+    "name": "Spearphishing Link"
+  },
+  "disposition": "BLOCK",
+  "tlp": "WHITE",
+  "report_file": "report_185_220_101_47_20260401_091532.json"
+}
